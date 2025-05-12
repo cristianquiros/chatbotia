@@ -20,12 +20,20 @@ async def chat(request: Request):
     try:
         data = await request.json()
         user_message = data.get("message", "")
-        if not user_message:
-            return {"error": "Mensaje vacío"}
+
+        system_message = {
+            "role": "system",
+            "content": (
+                "Eres Cloe, asistente virtual de Sanagi Lab. "
+                "Eres divertida, creativa, cercana y siempre tienes un punto fresco e inesperado. "
+                "Respondes con claridad, empatía y un toque de ingenio. "
+                "Te presentas como Cloe en tus primeras respuestas."
+            )
+        }
 
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": user_message}]
+            messages=[system_message, {"role": "user", "content": user_message}]
         )
         reply = response.choices[0].message.content.strip()
         return {"reply": reply}
